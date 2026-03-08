@@ -1,0 +1,26 @@
+/* ===== MultiSelect ===== */
+.p-multiselect {
+  .p-multiselect-label {
+    padding: 0.4375rem 0.6563rem; /* 7px 10.5px */
+  }
+}
+
+.p-multiselect-panel {
+  .p-multiselect-header {
+    .p-multiselect-filter {
+      font-size: var(--fs-14);
+      padding: 0.4375rem 0.6563rem; /* 7px 10.5px */
+      padding-right: var(--p-32);
+    }
+  }
+
+  .p-multiselect-items-wrapper {
+    .p-multiselect-empty-message {
+      font-size: var(--fs-14);
+    }
+
+    .p-multiselect-item {
+      font-size: var(--fs-14);
+    }
+  }
+}
