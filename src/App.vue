@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import Teste from '@/components/Teste.vue'
-
-const a = ref(0)
+import Container from '@/components/Container/Container.vue'
+import Sidebar from '@/components/Sidebar/Sidebar.vue'
 </script>
 
 <template>
-	<Teste />
+	<Container>
+		<Sidebar />
+	</Container>
 </template>
 
 <style scoped></style>
