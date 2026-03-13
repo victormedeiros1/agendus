@@ -11,10 +11,11 @@
 	position: relative;
 	display: flex;
 	width: 100%;
+	max-width: 1040px;
 	min-height: 100vh;
 	margin: 0 auto;
-	padding: var(--p-24);
-	padding-top: var(--p-24);
+	padding: var(--p-64);
+	padding-top: var(--p-112);
 
 	@media (max-width: 768px) {
 		min-height: 100svh;
