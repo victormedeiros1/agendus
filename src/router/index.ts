@@ -1,4 +1,4 @@
-import Agendamentos from '@/pages/Agendamentos.vue'
+import Appointments from '@/pages/Appointments.vue'
 import Faturas from '@/pages/Faturas.vue'
 import Privacidade from '@/pages/Privacidade.vue'
 
@@ -7,8 +7,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
 	{
 		path: '/',
+		redirect: '/appointments'
+	},
+	{
+		path: '/appointments',
 		name: 'Agendamentos',
-		component: Agendamentos
+		component: Appointments
 	},
 	{
 		path: '/faturas',
