@@ -1,13 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap');
+
 * {
+	font-family: 'Inter', sans-serif;
   box-sizing: border-box;
 }
 
 body {
-  background-image: url('@/assets/images/background1920x1080.jpg');
-	background-size: cover;
-	background-attachment: fixed;
-	padding: 0;
-	margin: 0;
+  margin: 0;
+  padding: 0;
 }
 
 h1,
@@ -17,56 +17,7 @@ h4,
 h5,
 h6,
 p {
-  color: var(--dark);
+  color: var(--p-grayscale-900);
   margin: 0;
   padding: 0;
-}
-
-/* ===== Formulários ===== */
-label.rotulo,
-span.rotulo {
-  color: var(--gray);
-  font-weight: 500;
-  font-size: var(--fs-14);
-  margin-bottom: var(--m-8);
-}
-
-label.rotulo--obrigatorio::after,
-span.rotulo--obrigatorio::after {
-  content: '';
-	content: '*';
-	color: var(--danger);
-}
-
-input.campo,
-textarea.campo {
-  width: 100%;
-  font-size: var(--fs-14);
-}
-
-.campo-container {
-  position: relative;
-  flex: 1;
-  display: flex;
-	flex-direction: column;
-  margin-bottom: var(--m-8);
-}
-
-.formulario {
-  display: flex;
-	flex-direction: column;
-	gap: var(--g-16);
-}
-
-.formulario__grupo {
-  display: flex;
-	gap: var(--g-16);
-}
-
-.campo-mensagem-de-erro {
-  font-size: var(--fs-12);
-  color: red;
-  position: absolute;
-  bottom: -1rem;
-  margin-top: var(--m-4);
 }

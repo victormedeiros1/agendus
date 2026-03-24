@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-	<div class="privacidade]">
+	<div class="privacidade">
 		<h1>Privacidade</h1>
 	</div>
 </template>
