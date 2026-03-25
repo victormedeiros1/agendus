@@ -1,7 +1,15 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Calendar from '@/components/Calendar/Calendar.vue'
+</script>
 
 <template>
-	<div class="appointments"></div>
+	<div class="appointments">
+		<Calendar />
+	</div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.appointments {
+	width: 100%;
+}
+</style>

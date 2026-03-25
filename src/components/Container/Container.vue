@@ -11,7 +11,6 @@
 	position: relative;
 	display: flex;
 	width: 100%;
-	max-width: 1040px;
 	min-height: 100vh;
 	margin: 0 auto;
 	padding: var(--p-64);
