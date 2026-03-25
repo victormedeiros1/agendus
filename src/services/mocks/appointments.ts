@@ -23,6 +23,17 @@ export const appointments: Appointment[] = [
 		}
 	},
 	{
+		start: new Date('2026-03-24T08:30:00Z'),
+		end: new Date('2026-03-24T09:30:00Z'),
+		detalhes: {
+			cliente: {
+				nome: 'João Silva',
+				telefone: '(11) 98765-4321'
+			},
+			servico: 'Cabelo'
+		}
+	},
+	{
 		start: new Date('2026-03-25T14:00:00Z'),
 		end: new Date('2026-03-25T15:00:00Z'),
 		detalhes: {
