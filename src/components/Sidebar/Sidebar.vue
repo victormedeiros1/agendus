@@ -17,7 +17,7 @@ const router = useRouter()
 						<router-link class="section__link" to="/appointments">
 							<i class="pi pi-objects-column"></i>TODOS
 						</router-link>
-						<router-link class="section__link" to="/">
+						<router-link class="section__link" to="/appointments/new">
 							<i class="pi pi-th-large"></i>NOVO
 						</router-link>
 					</div>

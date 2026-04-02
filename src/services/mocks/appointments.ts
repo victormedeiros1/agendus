@@ -12,8 +12,8 @@ export interface Appointment extends VueCalEvent {
 
 export const appointments: Appointment[] = [
 	{
-		start: new Date('2026-03-24T06:30:00Z'),
-		end: new Date('2026-03-24T07:30:00Z'),
+		start: new Date('2026-04-05T06:30:00Z'),
+		end: new Date('2026-04-05T07:30:00Z'),
 		detalhes: {
 			cliente: {
 				nome: 'João Silva',
@@ -23,8 +23,8 @@ export const appointments: Appointment[] = [
 		}
 	},
 	{
-		start: new Date('2026-03-24T08:30:00Z'),
-		end: new Date('2026-03-24T09:30:00Z'),
+		start: new Date('2026-04-05T08:30:00Z'),
+		end: new Date('2026-04-05T09:30:00Z'),
 		detalhes: {
 			cliente: {
 				nome: 'João Silva',
@@ -34,8 +34,8 @@ export const appointments: Appointment[] = [
 		}
 	},
 	{
-		start: new Date('2026-03-25T14:00:00Z'),
-		end: new Date('2026-03-25T15:00:00Z'),
+		start: new Date('2026-04-05T14:00:00Z'),
+		end: new Date('2026-04-05T15:00:00Z'),
 		detalhes: {
 			cliente: {
 				nome: 'Roberto',
@@ -45,8 +45,8 @@ export const appointments: Appointment[] = [
 		}
 	},
 	{
-		start: new Date('2026-03-26T10:00:00Z'),
-		end: new Date('2026-03-26T11:00:00Z'),
+		start: new Date('2026-04-05T10:00:00Z'),
+		end: new Date('2026-04-05T11:00:00Z'),
 		detalhes: {
 			cliente: {
 				nome: 'William',

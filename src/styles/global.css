@@ -17,6 +17,67 @@ h4,
 h5,
 h6,
 p {
+  color: var(--p-gray-600);
   margin: 0;
   padding: 0;
+}
+
+label {
+  color: var(--p-gray-600);
+}
+
+/* === Components === */
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--m-32);
+}
+
+.form__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m-8);
+}
+
+.form__group {
+  display: flex;
+  gap: var(--m-8);
+}
+.form__group--vertical {
+  flex-direction: column;
+}
+
+.form__group--radio {
+  display: flex;
+  gap: var(--m-8);
+}
+
+.form__footer {
+  display: flex;
+  flex-direction: row;
+  gap: var(--m-8);
+}
+
+/* === Prime Vue === */
+
+/* Iftalabel */
+.p-iftalabel {
+  width: 100%;
+}
+
+.p-iftalabel .p-inputtext {
+  width: 100%;
+  font-size: var(--fs-14);
+}
+
+.p-iftalabel .p-inputnumber {
+  width: 100%;
+}
+
+/* Select */
+.p-select {
+  width: 100%;
+  align-items: center;
+  height: 50px;
 }
