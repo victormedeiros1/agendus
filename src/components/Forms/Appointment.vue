@@ -1,37 +1,78 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+
+import { ServiceType, Service, AppointmentEvent } from '@/types/appointments'
+
+import { useAppointmentsStore } from '@/stores/appointments'
 
 import { IftaLabel, InputText, Select, RadioButton, InputNumber, Button } from 'primevue'
 
-const services = [
-	{ id: 0, name: 'Cabelo', price: 20 },
-	{ id: 1, name: 'Barba', price: 30 },
-	{ id: 2, name: 'Cabelo e Barba', price: 50 }
-]
+const serviceSelectedInitialState: Service = {
+	id: null,
+	name: '',
+	price: 0,
+	type: ServiceType.DEFAULT
+}
 
-const form = ref({
-	client: {
-		name: ''
-	},
-	service: {
-		type: 'default',
-		selected: services[0]
-	}
+const { addAppointment } = useAppointmentsStore()
+
+const name = ref<string>('')
+const serviceType = ref<ServiceType>(ServiceType.DEFAULT)
+const services = ref<{
+	loaded: Service[]
+	selected: Service
+}>({
+	loaded: [
+		{ id: 0, name: 'Cabelo', price: 20, type: ServiceType.DEFAULT },
+		{ id: 1, name: 'Barba', price: 30, type: ServiceType.DEFAULT },
+		{ id: 2, name: 'Cabelo e Barba', price: 50, type: ServiceType.DEFAULT }
+	],
+	selected: { ...serviceSelectedInitialState }
 })
 
-const typeServiceSelectedIsDefault = computed(() => form.value.service.type === 'default')
+const typeServiceSelectedIsDefault = computed(
+	() => serviceType.value === ServiceType.DEFAULT
+)
 
-const getServicePrice = () => {
-	if (typeServiceSelectedIsDefault.value) {
-		form.value.service.selected = services[0]
-	} else {
-		form.value.service.selected = {
-			id: 1000000,
-			name: '',
-			price: 0
+const handleTypeServiceChange = (): void => {
+	const selectFirstService = (): void => {
+		services.value.selected = { ...services.value.loaded[0] }
+	}
+
+	const resetStateToCustomService = (): void => {
+		services.value.selected = {
+			...serviceSelectedInitialState,
+			type: ServiceType.CUSTOM
 		}
 	}
+
+	if (typeServiceSelectedIsDefault.value) {
+		selectFirstService()
+	} else {
+		resetStateToCustomService()
+	}
 }
+
+const salvar = (): void => {
+	const payload: AppointmentEvent = {
+		start: new Date(),
+		end: new Date(),
+		client: {
+			name: name.value
+		},
+		service: services.value.selected
+	}
+
+	addAppointment(payload)
+}
+
+const loadFormInCreateMode = (): void => {
+	services.value.selected = services.value.loaded[0]
+}
+
+onMounted(() => {
+	loadFormInCreateMode()
+})
 </script>
 
 <template>
@@ -40,7 +81,7 @@ const getServicePrice = () => {
 			<h4 class="form__subtitle">Cliente</h4>
 			<div class="form__group">
 				<IftaLabel>
-					<InputText v-model="form.client.name" id="client" variant="filled" />
+					<InputText v-model="name" id="client" variant="filled" />
 					<label for="client">Nome</label>
 				</IftaLabel>
 			</div>
@@ -50,21 +91,21 @@ const getServicePrice = () => {
 			<div class="form__group form__group--vertical">
 				<div class="form__group form__group--radio">
 					<RadioButton
-						v-model="form.service.type"
-						@change="getServicePrice"
+						v-model="serviceType"
+						@change="handleTypeServiceChange"
 						inputId="type-default"
 						name="default"
-						value="default"
+						:value="ServiceType.DEFAULT"
 					/>
 					<label for="type-default">Padrão</label>
 				</div>
 				<div class="form__group form__group--radio">
 					<RadioButton
-						v-model="form.service.type"
-						@change="getServicePrice"
+						v-model="serviceType"
+						@change="handleTypeServiceChange"
 						inputId="type-custom"
 						name="custom"
-						value="custom"
+						:value="ServiceType.CUSTOM"
 					/>
 					<label for="type-custom">Customizado</label>
 				</div>
@@ -72,15 +113,15 @@ const getServicePrice = () => {
 			<div class="form__group">
 				<Select
 					v-if="typeServiceSelectedIsDefault"
-					v-model="form.service.selected"
-					:options="services"
+					v-model="services.selected"
+					:options="services.loaded"
 					optionLabel="name"
 					placeholder="Selecione um serviço"
 				/>
 
 				<IftaLabel v-else>
 					<InputText
-						v-model="form.service.selected.name"
+						v-model="services.selected.name"
 						id="service"
 						variant="filled"
 					/>
@@ -89,7 +130,7 @@ const getServicePrice = () => {
 
 				<IftaLabel>
 					<InputNumber
-						v-model="form.service.selected.price"
+						v-model="services.selected.price"
 						id="price"
 						type="number"
 						variant="filled"
@@ -99,7 +140,7 @@ const getServicePrice = () => {
 			</div>
 		</div>
 		<div class="form__footer">
-			<Button label="Salvar" severity="success" />
+			<Button @click="salvar" label="Salvar" severity="success" />
 			<Button label="Cancelar" severity="danger" />
 		</div>
 	</div>

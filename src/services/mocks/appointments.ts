@@ -1,58 +1,64 @@
-import { VueCalEvent } from 'vue-cal'
+import { AppointmentEvent, ServiceType } from '@/types/appointments'
 
-export interface Appointment extends VueCalEvent {
-	detalhes: {
-		cliente: {
-			nome: string
-			telefone: string
-		}
-		servico: string
-	}
-}
-
-export const appointments: Appointment[] = [
+export const appointments: AppointmentEvent[] = [
 	{
 		start: new Date('2026-04-05T06:30:00Z'),
 		end: new Date('2026-04-05T07:30:00Z'),
-		detalhes: {
-			cliente: {
-				nome: 'João Silva',
-				telefone: '(11) 98765-4321'
+		appointment: {
+			client: {
+				name: 'João Silva'
 			},
-			servico: 'Cabelo'
+			service: {
+				id: 0,
+				name: 'Cabelo',
+				price: 20,
+				type: ServiceType.DEFAULT
+			}
 		}
 	},
 	{
 		start: new Date('2026-04-05T08:30:00Z'),
 		end: new Date('2026-04-05T09:30:00Z'),
-		detalhes: {
-			cliente: {
-				nome: 'João Silva',
-				telefone: '(11) 98765-4321'
+		appointment: {
+			client: {
+				name: 'Rogério Santos'
 			},
-			servico: 'Cabelo'
+			service: {
+				id: 1,
+				name: 'Barba',
+				price: 30,
+				type: ServiceType.DEFAULT
+			}
 		}
 	},
 	{
 		start: new Date('2026-04-05T14:00:00Z'),
 		end: new Date('2026-04-05T15:00:00Z'),
-		detalhes: {
-			cliente: {
-				nome: 'Roberto',
-				telefone: '(21) 91234-5678'
+		appointment: {
+			client: {
+				name: 'Marcelo Carvalho'
 			},
-			servico: 'Barba'
+			service: {
+				id: 2,
+				name: 'Cabelo e Barba',
+				price: 45,
+				type: ServiceType.CUSTOM
+			}
 		}
 	},
 	{
 		start: new Date('2026-04-05T10:00:00Z'),
 		end: new Date('2026-04-05T11:00:00Z'),
-		detalhes: {
-			cliente: {
-				nome: 'William',
-				telefone: '(31) 99876-5432'
+		appointment: {
+			client: {
+				name: 'Carlos Pereira'
 			},
-			servico: 'Cabelo e Barba'
+			service: {
+				id: 3,
+				name: 'Cabelo',
+				price: 15,
+				type: ServiceType.CUSTOM
+			}
 		}
 	}
 ]

@@ -2,18 +2,22 @@
 import { VueCal } from 'vue-cal'
 import 'vue-cal/style'
 
-import { appointments } from '@/services/mocks/appointments'
 import useTime from '@/utils/useTime'
 
-const { extrairHorario, extrairData } = useTime()
+import { useAppointmentsStore } from '@/stores/appointments'
+import { storeToRefs } from 'pinia'
+
+const { extrairHorario } = useTime()
+
+const appointMentsStore = storeToRefs(useAppointmentsStore())
 </script>
 
 <template>
-	<VueCal :events="appointments" :time-cell-height="80">
+	<VueCal :events="appointMentsStore.appointments.value" :time-cell-height="80">
 		<template #event="{ event }">
 			<div class="appointment">
-				<span class="appointment__title">{{ event.detalhes.cliente.nome }}</span>
-				<span class="appointment__service">{{ event.detalhes.servico }}</span>
+				<span class="appointment__title">{{ event.client.name }}</span>
+				<span class="appointment__service">{{ event.service.name }}</span>
 				<span class="appointment__time"
 					>{{ extrairHorario(event.start) }} -
 					{{ extrairHorario(event.end) }}</span
