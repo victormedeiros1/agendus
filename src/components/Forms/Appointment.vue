@@ -45,7 +45,7 @@ const typeServiceSelectedIsDefault = computed(
 	(): boolean => serviceType.value === ServiceType.DEFAULT
 )
 
-const endTime = computed((): Date => {
+const endDate = computed((): Date => {
 	if (!startDate.value || !startTime.value || !duration.value) {
 		return null
 	}
@@ -76,8 +76,8 @@ const handleTypeServiceChange = (): void => {
 
 const salvar = (): void => {
 	const payload: AppointmentEvent = {
-		start: new Date(),
-		end: new Date(),
+		start: addTimeToDate(startDate.value, startTime.value),
+		end: endDate.value,
 		client: {
 			name: name.value
 		},
@@ -199,7 +199,7 @@ onMounted(() => {
 						:disabled="true"
 						placeholder="Data de término"
 						showIcon
-						:value="formatDateTimeBR(endTime)"
+						:value="formatDateTimeBR(endDate)"
 					/>
 				</div>
 			</div>
