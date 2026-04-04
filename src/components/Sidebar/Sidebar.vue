@@ -1,7 +1,7 @@
 <template>
 	<nav class="sidebar">
 		<div class="sidebar__header">
-			<img width="128px" src="/logo.svg" />
+			<img src="/logo.svg" width="128px" />
 		</div>
 		<div class="sidebar__body">
 			<div class="section">

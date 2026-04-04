@@ -133,8 +133,8 @@ onMounted(() => {
 				<Select
 					v-if="typeServiceSelectedIsDefault"
 					v-model="services.selected"
-					:options="services.loaded"
 					optionLabel="name"
+					:options="services.loaded"
 					placeholder="Selecione um serviço"
 				/>
 
@@ -165,8 +165,8 @@ onMounted(() => {
 					<label for="start-time">Data início</label>
 					<DatePicker
 						v-model="startDate"
-						inputId="start-date"
 						dateFormat="dd.mm.yy"
+						inputId="start-date"
 						placeholder="Data de início"
 						showIcon
 					/>
@@ -195,11 +195,11 @@ onMounted(() => {
 					<label for="end-time">Data Fim</label>
 					<InputText
 						id="end-time"
-						:disabled="true"
-						:value="formatDateTimeBR(endTime)"
 						dateFormat="dd.mm.yy"
+						:disabled="true"
 						placeholder="Data de término"
 						showIcon
+						:value="formatDateTimeBR(endTime)"
 					/>
 				</div>
 			</div>

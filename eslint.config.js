@@ -21,7 +21,6 @@ export default [
 		},
 		rules: {
 			'vue/multi-word-component-names': 'off',
-			'vue/attributes-order': 'warn',
 			'vue/no-mutating-props': 'error',
 			'@typescript-eslint/explicit-function-return-type': 'warn',
 			'@typescript-eslint/no-explicit-any': 'warn',
@@ -46,6 +45,25 @@ export default [
 						['parent', 'sibling', 'index']
 					],
 					alphabetize: { order: 'asc', ignoreCase: true }
+				}
+			],
+			'vue/attributes-order': [
+				'warn',
+				{
+					order: [
+						'DEFINITION', // is, v-is
+						'LIST_RENDERING', // v-for
+						'CONDITIONALS', // v-if, v-else-if, v-else, v-show
+						'RENDER_MODIFIERS', // v-once, v-pre
+						'GLOBAL', // id
+						['UNIQUE', 'SLOT'], // ref, key, slot
+						'TWO_WAY_BINDING', // v-model
+						'OTHER_DIRECTIVES',
+						'OTHER_ATTR', // props normais
+						'EVENTS', // @click etc
+						'CONTENT' // v-text, v-html
+					],
+					alphabetical: true // 👈 ordena dentro dos grupos
 				}
 			]
 		}
