@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-
-import { ServiceType, Service, AppointmentEvent } from '@/types/appointments'
-
 import { useAppointmentsStore } from '@/stores/appointments'
-
+import { ServiceType, Service, AppointmentEvent } from '@/types/appointments'
 import { IftaLabel, InputText, Select, RadioButton, InputNumber, Button } from 'primevue'
+import { computed, onMounted, ref } from 'vue'
 
 const serviceSelectedInitialState: Service = {
 	id: null,
@@ -81,7 +78,7 @@ onMounted(() => {
 			<h4 class="form__subtitle">Cliente</h4>
 			<div class="form__group">
 				<IftaLabel>
-					<InputText v-model="name" id="client" variant="filled" />
+					<InputText id="client" v-model="name" variant="filled" />
 					<label for="client">Nome</label>
 				</IftaLabel>
 			</div>
@@ -92,20 +89,20 @@ onMounted(() => {
 				<div class="form__group form__group--radio">
 					<RadioButton
 						v-model="serviceType"
-						@change="handleTypeServiceChange"
 						inputId="type-default"
 						name="default"
 						:value="ServiceType.DEFAULT"
+						@change="handleTypeServiceChange"
 					/>
 					<label for="type-default">Padrão</label>
 				</div>
 				<div class="form__group form__group--radio">
 					<RadioButton
 						v-model="serviceType"
-						@change="handleTypeServiceChange"
 						inputId="type-custom"
 						name="custom"
 						:value="ServiceType.CUSTOM"
+						@change="handleTypeServiceChange"
 					/>
 					<label for="type-custom">Customizado</label>
 				</div>
@@ -121,8 +118,8 @@ onMounted(() => {
 
 				<IftaLabel v-else>
 					<InputText
-						v-model="services.selected.name"
 						id="service"
+						v-model="services.selected.name"
 						variant="filled"
 					/>
 					<label for="service">Descrição</label>
@@ -130,8 +127,8 @@ onMounted(() => {
 
 				<IftaLabel>
 					<InputNumber
-						v-model="services.selected.price"
 						id="price"
+						v-model="services.selected.price"
 						type="number"
 						variant="filled"
 					/>
@@ -140,7 +137,7 @@ onMounted(() => {
 			</div>
 		</div>
 		<div class="form__footer">
-			<Button @click="salvar" label="Salvar" severity="success" />
+			<Button label="Salvar" severity="success" @click="salvar" />
 			<Button label="Cancelar" severity="danger" />
 		</div>
 	</div>

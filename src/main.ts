@@ -1,14 +1,11 @@
-import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import PrimeVue from 'primevue/config'
+import { createApp } from 'vue'
 
 import '@/styles/main.css'
 
-import App from './App.vue'
-
-import PrimeVue from 'primevue/config'
-
 import 'primeicons/primeicons.css'
-
+import App from './App.vue'
 import { router } from './router'
 import { Agendus } from './theme'
 

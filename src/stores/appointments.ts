@@ -1,5 +1,4 @@
 import { AppointmentEvent } from '@/types/appointments'
-
 import { defineStore } from 'pinia'
 
 export const useAppointmentsStore = defineStore('appointments', {

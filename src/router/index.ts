@@ -2,7 +2,6 @@ import Appointments from '@/pages/Appointments.vue'
 import Faturas from '@/pages/Faturas.vue'
 import NewAppointment from '@/pages/NewAppointment.vue'
 import Privacidade from '@/pages/Privacidade.vue'
-
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [

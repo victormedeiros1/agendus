@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { VueCal } from 'vue-cal'
 import 'vue-cal/style'
 
-import useTime from '@/utils/useTime'
-
 import { useAppointmentsStore } from '@/stores/appointments'
+import useTime from '@/utils/useTime'
 import { storeToRefs } from 'pinia'
+import { VueCal } from 'vue-cal'
 
 const { extrairHorario } = useTime()
 

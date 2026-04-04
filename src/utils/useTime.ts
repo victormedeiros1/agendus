@@ -1,11 +1,16 @@
-export default function useTime() {
-	const extrairHorario = (data: Date) => {
+interface useTimeReturn {
+	extrairHorario: (data: Date) => string
+	extrairData: (data: Date) => string
+}
+
+export default function useTime(): useTimeReturn {
+	const extrairHorario = (data: Date): string => {
 		const horas = data.getHours().toString().padStart(2, '0')
 		const minutos = data.getMinutes().toString().padStart(2, '0')
 		return `${horas}:${minutos}`
 	}
 
-	const extrairData = (data: Date) => {
+	const extrairData = (data: Date): string => {
 		const dia = data.getDate().toString().padStart(2, '0')
 		const mes = (data.getMonth() + 1).toString().padStart(2, '0')
 		const ano = data.getFullYear()
