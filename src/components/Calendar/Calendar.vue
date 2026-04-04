@@ -6,7 +6,7 @@ import useTime from '@/utils/useTime'
 import { storeToRefs } from 'pinia'
 import { VueCal } from 'vue-cal'
 
-const { extrairHorario } = useTime()
+const { extractTime } = useTime()
 
 const appointMentsStore = storeToRefs(useAppointmentsStore())
 </script>
@@ -18,8 +18,7 @@ const appointMentsStore = storeToRefs(useAppointmentsStore())
 				<span class="appointment__title">{{ event.client.name }}</span>
 				<span class="appointment__service">{{ event.service.name }}</span>
 				<span class="appointment__time"
-					>{{ extrairHorario(event.start) }} -
-					{{ extrairHorario(event.end) }}</span
+					>{{ extractTime(event.start) }} - {{ extractTime(event.end) }}</span
 				>
 			</div>
 		</template>

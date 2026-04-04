@@ -22,7 +22,7 @@ const serviceSelectedInitialState: Service = {
 
 const { addAppointment } = useAppointmentsStore()
 
-const { juntarDataComHoras, somarTempoAData, formatarDataParaBR } = useTime()
+const { addTimeToDate, addMinutesToDate, formatDateTimeBR } = useTime()
 
 const name = ref<string>('')
 const serviceType = ref<ServiceType>(ServiceType.DEFAULT)
@@ -50,9 +50,9 @@ const endTime = computed((): Date => {
 		return null
 	}
 
-	const dateWithHours = juntarDataComHoras(startDate.value, startTime.value)
+	const dateWithHours = addTimeToDate(startDate.value, startTime.value)
 
-	return somarTempoAData(dateWithHours, duration.value)
+	return addMinutesToDate(dateWithHours, duration.value)
 })
 
 const handleTypeServiceChange = (): void => {
@@ -196,7 +196,7 @@ onMounted(() => {
 					<InputText
 						id="end-time"
 						:disabled="true"
-						:value="formatarDataParaBR(endTime)"
+						:value="formatDateTimeBR(endTime)"
 						dateFormat="dd.mm.yy"
 						placeholder="Data de término"
 						showIcon

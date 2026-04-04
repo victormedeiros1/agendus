@@ -1,41 +1,42 @@
 interface useTimeReturn {
-	extrairHorario: (data: Date) => string
-	extrairData: (data: Date) => string
-	juntarDataComHoras: (data: Date, horas: Date) => Date
-	somarTempoAData: (data: Date, horas: number) => Date
-	formatarDataParaBR: (date: Date | null) => string
+	extractTime: (date: Date) => string
+	extractDate: (date: Date) => string
+	addTimeToDate: (date: Date, dateWithTime: Date) => Date
+	addMinutesToDate: (date: Date, minutes: number) => Date
+	formatDateTimeBR: (date: Date | null) => string
 }
 
 export default function useTime(): useTimeReturn {
-	const extrairHorario = (data: Date): string => {
-		const horas = data.getHours().toString().padStart(2, '0')
-		const minutos = data.getMinutes().toString().padStart(2, '0')
-		return `${horas}:${minutos}`
+	const extractTime = (date: Date): string => {
+		const hours = date.getHours().toString().padStart(2, '0')
+		const minutes = date.getMinutes().toString().padStart(2, '0')
+		return `${hours}:${minutes}`
 	}
 
-	const extrairData = (data: Date): string => {
-		const dia = data.getDate().toString().padStart(2, '0')
-		const mes = (data.getMonth() + 1).toString().padStart(2, '0')
-		const ano = data.getFullYear()
-		return `${dia}/${mes}/${ano}`
+	const extractDate = (date: Date): string => {
+		const day = date.getDate().toString().padStart(2, '0')
+		const month = (date.getMonth() + 1).toString().padStart(2, '0')
+		const year = date.getFullYear()
+
+		return `${day}/${month}/${year}`
 	}
 
-	const juntarDataComHoras = (data: Date, horas: Date): Date => {
-		const novaData = new Date(data.getTime())
-		novaData.setHours(novaData.getHours() + horas.getHours())
-		novaData.setMinutes(novaData.getMinutes() + horas.getMinutes())
+	const addTimeToDate = (data: Date, dateWithTime: Date): Date => {
+		const newDate = new Date(data.getTime())
+		newDate.setHours(newDate.getHours() + dateWithTime.getHours())
+		newDate.setMinutes(newDate.getMinutes() + dateWithTime.getMinutes())
 
-		return novaData
+		return newDate
 	}
 
-	const somarTempoAData = (data: Date, tempo: number): Date => {
-		const novaData = new Date(data.getTime())
-		novaData.setMinutes(novaData.getMinutes() + tempo)
+	const addMinutesToDate = (date: Date, minutes: number): Date => {
+		const newDate = new Date(date.getTime())
+		newDate.setMinutes(newDate.getMinutes() + minutes)
 
-		return novaData
+		return newDate
 	}
 
-	const formatarDataParaBR = (date: Date | null): string => {
+	const formatDateTimeBR = (date: Date | null): string => {
 		if (!date) return ''
 
 		const day = String(date.getDate()).padStart(2, '0')
@@ -49,10 +50,10 @@ export default function useTime(): useTimeReturn {
 	}
 
 	return {
-		extrairHorario,
-		extrairData,
-		juntarDataComHoras,
-		somarTempoAData,
-		formatarDataParaBR
+		extractTime,
+		extractDate,
+		addTimeToDate,
+		addMinutesToDate,
+		formatDateTimeBR
 	}
 }
