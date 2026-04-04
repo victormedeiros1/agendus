@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import { useAppointmentsStore } from '@/stores/appointments'
 import { ServiceType, Service, AppointmentEvent } from '@/types/appointments'
-import { IftaLabel, InputText, Select, RadioButton, InputNumber, Button } from 'primevue'
+import useTime from '@/utils/useTime'
+import {
+	IftaLabel,
+	InputText,
+	Select,
+	RadioButton,
+	InputNumber,
+	Button,
+	DatePicker
+} from 'primevue'
 import { computed, onMounted, ref } from 'vue'
 
 const serviceSelectedInitialState: Service = {
@@ -12,6 +21,8 @@ const serviceSelectedInitialState: Service = {
 }
 
 const { addAppointment } = useAppointmentsStore()
+
+const { juntarDataComHoras, somarTempoAData, formatarDataParaBR } = useTime()
 
 const name = ref<string>('')
 const serviceType = ref<ServiceType>(ServiceType.DEFAULT)
@@ -26,10 +37,23 @@ const services = ref<{
 	],
 	selected: { ...serviceSelectedInitialState }
 })
+const startDate = ref<Date>()
+const startTime = ref<Date>()
+const duration = ref<number>()
 
 const typeServiceSelectedIsDefault = computed(
-	() => serviceType.value === ServiceType.DEFAULT
+	(): boolean => serviceType.value === ServiceType.DEFAULT
 )
+
+const endTime = computed((): Date => {
+	if (!startDate.value || !startTime.value || !duration.value) {
+		return null
+	}
+
+	const dateWithHours = juntarDataComHoras(startDate.value, startTime.value)
+
+	return somarTempoAData(dateWithHours, duration.value)
+})
 
 const handleTypeServiceChange = (): void => {
 	const selectFirstService = (): void => {
@@ -85,27 +109,25 @@ onMounted(() => {
 		</div>
 		<div class="form__section">
 			<h4 class="form__subtitle">Serviço</h4>
-			<div class="form__group form__group--vertical">
-				<div class="form__group form__group--radio">
-					<RadioButton
-						v-model="serviceType"
-						inputId="type-default"
-						name="default"
-						:value="ServiceType.DEFAULT"
-						@change="handleTypeServiceChange"
-					/>
-					<label for="type-default">Padrão</label>
-				</div>
-				<div class="form__group form__group--radio">
-					<RadioButton
-						v-model="serviceType"
-						inputId="type-custom"
-						name="custom"
-						:value="ServiceType.CUSTOM"
-						@change="handleTypeServiceChange"
-					/>
-					<label for="type-custom">Customizado</label>
-				</div>
+			<div class="form__group form__group--radio">
+				<RadioButton
+					v-model="serviceType"
+					inputId="type-default"
+					name="default"
+					:value="ServiceType.DEFAULT"
+					@change="handleTypeServiceChange"
+				/>
+				<label for="type-default">Padrão</label>
+			</div>
+			<div class="form__group form__group--radio">
+				<RadioButton
+					v-model="serviceType"
+					inputId="type-custom"
+					name="custom"
+					:value="ServiceType.CUSTOM"
+					@change="handleTypeServiceChange"
+				/>
+				<label for="type-custom">Customizado</label>
 			</div>
 			<div class="form__group">
 				<Select
@@ -134,6 +156,52 @@ onMounted(() => {
 					/>
 					<label for="price">Preço</label>
 				</IftaLabel>
+			</div>
+		</div>
+		<div class="form__section">
+			<h4 class="form__subtitle">Data e horário</h4>
+			<div class="form__group">
+				<div class="input__group">
+					<label for="start-time">Data início</label>
+					<DatePicker
+						v-model="startDate"
+						inputId="start-date"
+						dateFormat="dd.mm.yy"
+						placeholder="Data de início"
+						showIcon
+					/>
+				</div>
+				<div class="input__group">
+					<label for="start-time">Hora início</label>
+					<DatePicker
+						v-model="startTime"
+						inputId="start-time"
+						placeholder="Horário de início"
+						showIcon
+						timeOnly
+					/>
+				</div>
+				<div class="input__group">
+					<label for="duration">Duração</label>
+					<InputNumber
+						v-model="duration"
+						inputId="duration"
+						placeholder="Duração"
+						showIcon
+						timeOnly
+					/>
+				</div>
+				<div class="input__group">
+					<label for="end-time">Data Fim</label>
+					<InputText
+						id="end-time"
+						:disabled="true"
+						:value="formatarDataParaBR(endTime)"
+						dateFormat="dd.mm.yy"
+						placeholder="Data de término"
+						showIcon
+					/>
+				</div>
 			</div>
 		</div>
 		<div class="form__footer">
