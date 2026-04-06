@@ -17,6 +17,18 @@
 					</div>
 				</ul>
 			</div>
+
+			<div class="section">
+				<div class="section__title">SERVIÇOS</div>
+				<ul class="section__menu">
+					<div class="section__item">
+						<router-link class="section__link" to="/services">
+							<i class="pi pi-warehouse"></i>SERVIÇOS
+						</router-link>
+					</div>
+				</ul>
+			</div>
+
 			<div class="section">
 				<div class="section__title">ESTATÍSTICAS</div>
 				<ul class="section__menu">
@@ -44,6 +56,7 @@
 
 <style scoped lang="scss">
 .sidebar {
+	background-color: var(--p-primary-0);
 	width: 200px;
 	height: 100%;
 	position: fixed;

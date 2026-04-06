@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useAppointmentsStore } from '@/stores/appointments'
-import { ServiceType, Service, AppointmentEvent } from '@/types/appointments'
+import { ServiceType, Service, IRequestAppointment } from '@/types/appointments'
 import useTime from '@/utils/useTime'
-import { toTypedSchema } from '@vee-validate/zod'
+import useVuelidate from '@vuelidate/core'
+import { required, minValue } from '@vuelidate/validators'
 import {
 	InputText,
 	Select,
@@ -12,93 +13,120 @@ import {
 	DatePicker,
 	useToast
 } from 'primevue'
-import { useForm } from 'vee-validate'
-import { computed } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
+import { reactive, computed } from 'vue'
 
-import { appointmentFormSchema } from './schema'
+interface AppointmentForm {
+	id: string
+	start: Date
+	end: Date
+	client: {
+		name: string
+	}
+	startTime: Date
+	duration: number
+	service: {
+		id: string
+		name: string
+		price: number
+		type: ServiceType
+	}
+}
 
 const SERVICES: Service[] = [
-	{ id: 0, name: 'Cabelo', price: 20, type: ServiceType.DEFAULT },
-	{ id: 1, name: 'Barba', price: 30, type: ServiceType.DEFAULT },
-	{ id: 2, name: 'Cabelo e Barba', price: 50, type: ServiceType.DEFAULT }
+	{ id: '0', name: 'Cabelo', price: 20, type: ServiceType.DEFAULT },
+	{ id: '1', name: 'Barba', price: 30, type: ServiceType.DEFAULT },
+	{ id: '2', name: 'Cabelo e Barba', price: 50, type: ServiceType.DEFAULT }
 ]
 
-const { defineField, handleSubmit, errors, setFieldValue } = useForm({
-	validationSchema: toTypedSchema(appointmentFormSchema),
-	initialValues: {
-		service: {
-			id: SERVICES[0].id,
-			name: SERVICES[0].name,
-			price: SERVICES[0].price,
-			type: ServiceType.DEFAULT
-		}
+const form = reactive<AppointmentForm>({
+	id: '',
+	client: {
+		name: ''
+	},
+	start: new Date(),
+	end: new Date(),
+	startTime: new Date(),
+	duration: 30,
+	service: {
+		id: SERVICES[0].id,
+		name: SERVICES[0].name,
+		price: SERVICES[0].price,
+		type: ServiceType.DEFAULT
 	}
 })
+
+const rules = computed(() => ({
+	client: {
+		name: { required }
+	},
+	start: { required },
+	startTime: { required },
+	duration: { required, minValue: minValue(1) },
+	service: {
+		type: { required },
+		id: { required },
+		name: { required },
+		price: { required, minValue: minValue(1) }
+	}
+}))
+
+const v$ = useVuelidate(rules, form)
 
 const { addAppointment } = useAppointmentsStore()
 const { addTimeToDate, addMinutesToDate, formatDateTimeBR } = useTime()
 const toast = useToast()
 
-const [name] = defineField('name')
-const [startDate] = defineField('startDate')
-const [startTime] = defineField('startTime')
-const [duration] = defineField('duration')
-
-const [serviceType] = defineField('service.type')
-const [serviceId] = defineField('service.id')
-const [serviceName] = defineField('service.name')
-const [servicePrice] = defineField('service.price')
-
-const typeSelectedIsDefault = computed(() => serviceType.value === ServiceType.DEFAULT)
+const typeSelectedIsDefault = computed(
+	(): boolean => form.service.type === ServiceType.DEFAULT
+)
 
 const selectedService = computed({
-	get: () => SERVICES.find(service => service.id === serviceId.value),
+	get: () => SERVICES.find(s => s.id === form.service.id),
 	set: (service: Service | null) => {
 		if (!service) return
-		setFieldValue('service.id', service.id)
-		setFieldValue('service.name', service.name)
-		setFieldValue('service.price', service.price)
+		form.service.id = service.id
+		form.service.name = service.name
+		form.service.price = service.price
 	}
 })
 
 const handleTypeServiceChange = (): void => {
 	if (typeSelectedIsDefault.value) {
-		setFieldValue('service.id', SERVICES[0].id)
-		setFieldValue('service.name', SERVICES[0].name)
-		setFieldValue('service.price', SERVICES[0].price)
+		Object.assign(form.service, SERVICES[0])
 	} else {
-		setFieldValue('service.id', null)
-		setFieldValue('service.name', '')
-		setFieldValue('service.price', 0)
+		form.service.id = ''
+		form.service.name = ''
+		form.service.price = 0
 	}
 }
 
-const endDate = computed((): Date | null => {
-	if (!startDate.value || !startTime.value || !duration.value) return null
-	const dateWithHours = addTimeToDate(startDate.value, startTime.value)
-	return addMinutesToDate(dateWithHours, duration.value)
+const endDate = computed((): Date => {
+	const dateWithHours = addTimeToDate(form.start, form.startTime)
+	return addMinutesToDate(dateWithHours, form.duration)
 })
 
-const salvar = handleSubmit((values): void => {
-	const payload: AppointmentEvent = {
-		start: addTimeToDate(startDate.value, startTime.value),
+const salvar = async (): Promise<void> => {
+	const isValid = await v$.value.$validate()
+
+	if (!isValid) return
+
+	const payload: IRequestAppointment = {
+		id: uuidv4(),
+		start: addTimeToDate(form.start, form.startTime),
 		end: endDate.value,
-		client: { name: name.value },
-		service: {
-			id: values.service.id,
-			name: values.service.name,
-			price: values.service.price,
-			type: values.service.type
-		}
+		client: { name: form.client.name },
+		service: { ...form.service }
 	}
 
 	addAppointment(payload)
+
 	toast.add({
 		severity: 'success',
 		summary: 'Agendamento criado',
 		detail: `Agendamento para ${payload.client.name} criado com sucesso!`
 	})
-})
+}
 </script>
 
 <template>
@@ -107,14 +135,17 @@ const salvar = handleSubmit((values): void => {
 			<h3 class="form__subtitle">Cliente</h3>
 			<div class="form__group">
 				<div class="input__group">
-					<label for="name">Nome</label>
+					<label for="name">Nome<span class="required">*</span></label>
 					<InputText
 						id="name"
-						v-model="name"
+						v-model="form.client.name"
 						placeholder="Ex: Ricardo Silva"
 						variant="filled"
 					/>
-					<small class="input-error">{{ errors.name }}</small>
+
+					<small v-if="v$.client.name.$error" class="input-error"
+						>Nome obrigatório</small
+					>
 				</div>
 			</div>
 		</div>
@@ -123,10 +154,12 @@ const salvar = handleSubmit((values): void => {
 			<h3 class="form__subtitle">Serviço</h3>
 			<div class="form__group">
 				<div class="input__group">
-					<label>Selecione o tipo de serviço</label>
+					<label
+						>Selecione o tipo de serviço<span class="required">*</span></label
+					>
 					<div class="form__group form__group--radio">
 						<RadioButton
-							v-model="serviceType"
+							v-model="form.service.type"
 							inputId="type-default"
 							name="serviceType"
 							:value="ServiceType.DEFAULT"
@@ -136,7 +169,7 @@ const salvar = handleSubmit((values): void => {
 					</div>
 					<div class="form__group form__group--radio">
 						<RadioButton
-							v-model="serviceType"
+							v-model="form.service.type"
 							inputId="type-custom"
 							name="serviceType"
 							:value="ServiceType.CUSTOM"
@@ -144,11 +177,15 @@ const salvar = handleSubmit((values): void => {
 						/>
 						<label for="type-custom">Customizado</label>
 					</div>
-					<small class="input-error">{{ errors['service.type'] }}</small>
+					<small v-if="v$.service.type.$error" class="input-error"
+						>Tipo de serviço obrigatório</small
+					>
 				</div>
 
 				<div v-if="typeSelectedIsDefault" class="input__group">
-					<label for="service-select">Opções</label>
+					<label for="service-select"
+						>Opções<span class="required">*</span></label
+					>
 					<Select
 						id="service-select"
 						v-model="selectedService"
@@ -156,72 +193,100 @@ const salvar = handleSubmit((values): void => {
 						:options="SERVICES"
 						placeholder="Selecione um serviço"
 					/>
-					<small class="input-error">{{ errors['service.id'] }}</small>
+					<small v-if="v$.service.id.$error" class="input-error"
+						>Serviço obrigatório</small
+					>
 				</div>
 
 				<div v-else class="input__group">
-					<label for="service-name">Descrição</label>
-					<InputText id="service-name" v-model="serviceName" variant="filled" />
-					<small class="input-error">{{ errors['service.name'] }}</small>
+					<label for="service-name"
+						>Descrição<span class="required">*</span></label
+					>
+					<InputText
+						id="service-name"
+						v-model="form.service.name"
+						variant="filled"
+					/>
+					<small v-if="v$.service.name.$error">Descrição obrigatória</small>
 				</div>
 
 				<div class="input__group">
-					<label for="price">Preço</label>
+					<label for="price">Preço<span class="required">*</span></label>
 					<InputNumber
 						id="price"
-						v-model="servicePrice"
+						v-model="form.service.price"
 						currency="BRL"
 						:disabled="typeSelectedIsDefault"
 						locale="pt-BR"
 						mode="currency"
 						variant="filled"
 					/>
-					<small class="input-error">{{ errors['service.price'] }}</small>
+					<small v-if="v$.service.price.$error" class="input-error"
+						>Preço inválido</small
+					>
 				</div>
 			</div>
+
+			<InputNumber v-model="form.service.price" />
+
+			<small v-if="v$.service.price.$error" class="input-error"
+				>Preço inválido</small
+			>
 		</div>
 
 		<div class="form__section">
 			<h3 class="form__subtitle">Data e horário</h3>
 			<div class="form__group">
 				<div class="input__group">
-					<label for="start-date">Data início</label>
+					<label for="start-date"
+						>Data início<span class="required">*</span></label
+					>
 					<DatePicker
-						v-model="startDate"
+						v-model="form.start"
 						dateFormat="dd.mm.yy"
 						inputId="start-date"
 						placeholder="Ex: 01.01.2026"
 						showIcon
 					/>
-					<small class="input-error">{{ errors.startDate }}</small>
+					<small v-if="v$.start.$error" class="input-error"
+						>Data início inválida</small
+					>
 				</div>
 
 				<div class="input__group">
-					<label for="start-time">Hora início</label>
+					<label for="start-time"
+						>Hora início<span class="required">*</span></label
+					>
 					<DatePicker
-						v-model="startTime"
+						v-model="form.startTime"
 						inputId="start-time"
 						placeholder="Ex: 15:30"
 						showIcon
 						timeOnly
 					/>
-					<small class="input-error">{{ errors.startTime }}</small>
+					<small v-if="v$.startTime.$error" class="input-error"
+						>Hora início inválida</small
+					>
 				</div>
 
 				<div class="input__group">
-					<label for="duration">Duração (minutos)</label>
+					<label for="duration"
+						>Duração (minutos)<span class="required">*</span></label
+					>
 					<InputNumber
-						v-model="duration"
+						v-model="form.duration"
 						inputId="duration"
 						:min="1"
 						placeholder="Ex: 30"
 						variant="filled"
 					/>
-					<small class="input-error">{{ errors.duration }}</small>
+					<small v-if="v$.duration.$error" class="input-error"
+						>Duração inválida</small
+					>
 				</div>
 
 				<div class="input__group">
-					<label for="end-time">Data Fim</label>
+					<label for="end-time">Data Fim<span class="required">*</span></label>
 					<InputText
 						id="end-time"
 						:disabled="true"
@@ -238,9 +303,3 @@ const salvar = handleSubmit((values): void => {
 		</div>
 	</div>
 </template>
-
-<style scoped lang="scss">
-label {
-	cursor: pointer;
-}
-</style>

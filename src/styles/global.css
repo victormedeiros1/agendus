@@ -30,6 +30,10 @@ label {
   color: var(--p-gray-600);
 }
 
+.required {
+  color: var(--p-red-500);
+}
+
 /* === Components === */
 .form {
   width: 100%;

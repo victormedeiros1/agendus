@@ -6,7 +6,7 @@ export enum ServiceType {
 }
 
 export interface Service {
-	id: number | null
+	id: string
 	name: string
 	price: number
 	type: ServiceType
@@ -20,3 +20,13 @@ interface Appointment {
 }
 
 export interface AppointmentEvent extends VueCalEvent, Appointment {}
+
+export interface IRequestAppointment {
+	id: string
+	client: {
+		name: string
+	}
+	service: Service
+	start: Date
+	end: Date
+}
