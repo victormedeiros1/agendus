@@ -2,208 +2,236 @@
 import { useAppointmentsStore } from '@/stores/appointments'
 import { ServiceType, Service, AppointmentEvent } from '@/types/appointments'
 import useTime from '@/utils/useTime'
+import { toTypedSchema } from '@vee-validate/zod'
 import {
-	IftaLabel,
 	InputText,
 	Select,
 	RadioButton,
 	InputNumber,
 	Button,
-	DatePicker
+	DatePicker,
+	useToast
 } from 'primevue'
-import { computed, onMounted, ref } from 'vue'
+import { useForm } from 'vee-validate'
+import { computed } from 'vue'
 
-const serviceSelectedInitialState: Service = {
-	id: null,
-	name: '',
-	price: 0,
-	type: ServiceType.DEFAULT
-}
+import { appointmentFormSchema } from './schema'
+
+const SERVICES: Service[] = [
+	{ id: 0, name: 'Cabelo', price: 20, type: ServiceType.DEFAULT },
+	{ id: 1, name: 'Barba', price: 30, type: ServiceType.DEFAULT },
+	{ id: 2, name: 'Cabelo e Barba', price: 50, type: ServiceType.DEFAULT }
+]
+
+const { defineField, handleSubmit, errors, setFieldValue } = useForm({
+	validationSchema: toTypedSchema(appointmentFormSchema),
+	initialValues: {
+		service: {
+			id: SERVICES[0].id,
+			name: SERVICES[0].name,
+			price: SERVICES[0].price,
+			type: ServiceType.DEFAULT
+		}
+	}
+})
 
 const { addAppointment } = useAppointmentsStore()
-
 const { addTimeToDate, addMinutesToDate, formatDateTimeBR } = useTime()
+const toast = useToast()
 
-const name = ref<string>('')
-const serviceType = ref<ServiceType>(ServiceType.DEFAULT)
-const services = ref<{
-	loaded: Service[]
-	selected: Service
-}>({
-	loaded: [
-		{ id: 0, name: 'Cabelo', price: 20, type: ServiceType.DEFAULT },
-		{ id: 1, name: 'Barba', price: 30, type: ServiceType.DEFAULT },
-		{ id: 2, name: 'Cabelo e Barba', price: 50, type: ServiceType.DEFAULT }
-	],
-	selected: { ...serviceSelectedInitialState }
-})
-const startDate = ref<Date>()
-const startTime = ref<Date>()
-const duration = ref<number>()
+const [name] = defineField('name')
+const [startDate] = defineField('startDate')
+const [startTime] = defineField('startTime')
+const [duration] = defineField('duration')
 
-const typeServiceSelectedIsDefault = computed(
-	(): boolean => serviceType.value === ServiceType.DEFAULT
-)
+const [serviceType] = defineField('service.type')
+const [serviceId] = defineField('service.id')
+const [serviceName] = defineField('service.name')
+const [servicePrice] = defineField('service.price')
 
-const endDate = computed((): Date => {
-	if (!startDate.value || !startTime.value || !duration.value) {
-		return null
+const typeSelectedIsDefault = computed(() => serviceType.value === ServiceType.DEFAULT)
+
+const selectedService = computed({
+	get: () => SERVICES.find(service => service.id === serviceId.value),
+	set: (service: Service | null) => {
+		if (!service) return
+		setFieldValue('service.id', service.id)
+		setFieldValue('service.name', service.name)
+		setFieldValue('service.price', service.price)
 	}
-
-	const dateWithHours = addTimeToDate(startDate.value, startTime.value)
-
-	return addMinutesToDate(dateWithHours, duration.value)
 })
 
 const handleTypeServiceChange = (): void => {
-	const selectFirstService = (): void => {
-		services.value.selected = { ...services.value.loaded[0] }
-	}
-
-	const resetStateToCustomService = (): void => {
-		services.value.selected = {
-			...serviceSelectedInitialState,
-			type: ServiceType.CUSTOM
-		}
-	}
-
-	if (typeServiceSelectedIsDefault.value) {
-		selectFirstService()
+	if (typeSelectedIsDefault.value) {
+		setFieldValue('service.id', SERVICES[0].id)
+		setFieldValue('service.name', SERVICES[0].name)
+		setFieldValue('service.price', SERVICES[0].price)
 	} else {
-		resetStateToCustomService()
+		setFieldValue('service.id', null)
+		setFieldValue('service.name', '')
+		setFieldValue('service.price', 0)
 	}
 }
 
-const salvar = (): void => {
+const endDate = computed((): Date | null => {
+	if (!startDate.value || !startTime.value || !duration.value) return null
+	const dateWithHours = addTimeToDate(startDate.value, startTime.value)
+	return addMinutesToDate(dateWithHours, duration.value)
+})
+
+const salvar = handleSubmit((values): void => {
 	const payload: AppointmentEvent = {
 		start: addTimeToDate(startDate.value, startTime.value),
 		end: endDate.value,
-		client: {
-			name: name.value
-		},
-		service: services.value.selected
+		client: { name: name.value },
+		service: {
+			id: values.service.id,
+			name: values.service.name,
+			price: values.service.price,
+			type: values.service.type
+		}
 	}
 
 	addAppointment(payload)
-}
-
-const loadFormInCreateMode = (): void => {
-	services.value.selected = services.value.loaded[0]
-}
-
-onMounted(() => {
-	loadFormInCreateMode()
+	toast.add({
+		severity: 'success',
+		summary: 'Agendamento criado',
+		detail: `Agendamento para ${payload.client.name} criado com sucesso!`
+	})
 })
 </script>
 
 <template>
 	<div class="form">
 		<div class="form__section">
-			<h4 class="form__subtitle">Cliente</h4>
-			<div class="form__group">
-				<IftaLabel>
-					<InputText id="client" v-model="name" variant="filled" />
-					<label for="client">Nome</label>
-				</IftaLabel>
-			</div>
-		</div>
-		<div class="form__section">
-			<h4 class="form__subtitle">Serviço</h4>
-			<div class="form__group form__group--radio">
-				<RadioButton
-					v-model="serviceType"
-					inputId="type-default"
-					name="default"
-					:value="ServiceType.DEFAULT"
-					@change="handleTypeServiceChange"
-				/>
-				<label for="type-default">Padrão</label>
-			</div>
-			<div class="form__group form__group--radio">
-				<RadioButton
-					v-model="serviceType"
-					inputId="type-custom"
-					name="custom"
-					:value="ServiceType.CUSTOM"
-					@change="handleTypeServiceChange"
-				/>
-				<label for="type-custom">Customizado</label>
-			</div>
-			<div class="form__group">
-				<Select
-					v-if="typeServiceSelectedIsDefault"
-					v-model="services.selected"
-					optionLabel="name"
-					:options="services.loaded"
-					placeholder="Selecione um serviço"
-				/>
-
-				<IftaLabel v-else>
-					<InputText
-						id="service"
-						v-model="services.selected.name"
-						variant="filled"
-					/>
-					<label for="service">Descrição</label>
-				</IftaLabel>
-
-				<IftaLabel>
-					<InputNumber
-						id="price"
-						v-model="services.selected.price"
-						type="number"
-						variant="filled"
-					/>
-					<label for="price">Preço</label>
-				</IftaLabel>
-			</div>
-		</div>
-		<div class="form__section">
-			<h4 class="form__subtitle">Data e horário</h4>
+			<h3 class="form__subtitle">Cliente</h3>
 			<div class="form__group">
 				<div class="input__group">
-					<label for="start-time">Data início</label>
+					<label for="name">Nome</label>
+					<InputText
+						id="name"
+						v-model="name"
+						placeholder="Ex: Ricardo Silva"
+						variant="filled"
+					/>
+					<small class="input-error">{{ errors.name }}</small>
+				</div>
+			</div>
+		</div>
+
+		<div class="form__section">
+			<h3 class="form__subtitle">Serviço</h3>
+			<div class="form__group">
+				<div class="input__group">
+					<label>Selecione o tipo de serviço</label>
+					<div class="form__group form__group--radio">
+						<RadioButton
+							v-model="serviceType"
+							inputId="type-default"
+							name="serviceType"
+							:value="ServiceType.DEFAULT"
+							@change="handleTypeServiceChange"
+						/>
+						<label for="type-default">Padrão</label>
+					</div>
+					<div class="form__group form__group--radio">
+						<RadioButton
+							v-model="serviceType"
+							inputId="type-custom"
+							name="serviceType"
+							:value="ServiceType.CUSTOM"
+							@change="handleTypeServiceChange"
+						/>
+						<label for="type-custom">Customizado</label>
+					</div>
+					<small class="input-error">{{ errors['service.type'] }}</small>
+				</div>
+
+				<div v-if="typeSelectedIsDefault" class="input__group">
+					<label for="service-select">Opções</label>
+					<Select
+						id="service-select"
+						v-model="selectedService"
+						optionLabel="name"
+						:options="SERVICES"
+						placeholder="Selecione um serviço"
+					/>
+					<small class="input-error">{{ errors['service.id'] }}</small>
+				</div>
+
+				<div v-else class="input__group">
+					<label for="service-name">Descrição</label>
+					<InputText id="service-name" v-model="serviceName" variant="filled" />
+					<small class="input-error">{{ errors['service.name'] }}</small>
+				</div>
+
+				<div class="input__group">
+					<label for="price">Preço</label>
+					<InputNumber
+						id="price"
+						v-model="servicePrice"
+						currency="BRL"
+						:disabled="typeSelectedIsDefault"
+						locale="pt-BR"
+						mode="currency"
+						variant="filled"
+					/>
+					<small class="input-error">{{ errors['service.price'] }}</small>
+				</div>
+			</div>
+		</div>
+
+		<div class="form__section">
+			<h3 class="form__subtitle">Data e horário</h3>
+			<div class="form__group">
+				<div class="input__group">
+					<label for="start-date">Data início</label>
 					<DatePicker
 						v-model="startDate"
 						dateFormat="dd.mm.yy"
 						inputId="start-date"
-						placeholder="Data de início"
+						placeholder="Ex: 01.01.2026"
 						showIcon
 					/>
+					<small class="input-error">{{ errors.startDate }}</small>
 				</div>
+
 				<div class="input__group">
 					<label for="start-time">Hora início</label>
 					<DatePicker
 						v-model="startTime"
 						inputId="start-time"
-						placeholder="Horário de início"
+						placeholder="Ex: 15:30"
 						showIcon
 						timeOnly
 					/>
+					<small class="input-error">{{ errors.startTime }}</small>
 				</div>
+
 				<div class="input__group">
-					<label for="duration">Duração</label>
+					<label for="duration">Duração (minutos)</label>
 					<InputNumber
 						v-model="duration"
 						inputId="duration"
-						placeholder="Duração"
-						showIcon
-						timeOnly
+						:min="1"
+						placeholder="Ex: 30"
+						variant="filled"
 					/>
+					<small class="input-error">{{ errors.duration }}</small>
 				</div>
+
 				<div class="input__group">
 					<label for="end-time">Data Fim</label>
 					<InputText
 						id="end-time"
-						dateFormat="dd.mm.yy"
 						:disabled="true"
-						placeholder="Data de término"
-						showIcon
-						:value="formatDateTimeBR(endDate)"
+						placeholder="Calculado automaticamente"
+						:value="endDate ? formatDateTimeBR(endDate) : ''"
 					/>
 				</div>
 			</div>
 		</div>
+
 		<div class="form__footer">
 			<Button label="Salvar" severity="success" @click="salvar" />
 			<Button label="Cancelar" severity="danger" />
