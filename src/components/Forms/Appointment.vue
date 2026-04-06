@@ -207,7 +207,9 @@ const salvar = async (): Promise<void> => {
 						v-model="form.service.name"
 						variant="filled"
 					/>
-					<small v-if="v$.service.name.$error">Descrição obrigatória</small>
+					<small v-if="v$.service.name.$error" class="input-error"
+						>Descrição obrigatória</small
+					>
 				</div>
 
 				<div class="input__group">
@@ -226,12 +228,6 @@ const salvar = async (): Promise<void> => {
 					>
 				</div>
 			</div>
-
-			<InputNumber v-model="form.service.price" />
-
-			<small v-if="v$.service.price.$error" class="input-error"
-				>Preço inválido</small
-			>
 		</div>
 
 		<div class="form__section">
