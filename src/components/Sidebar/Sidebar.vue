@@ -1,7 +1,11 @@
+<script setup lang="ts">
+import Logo from '@/components/Logo/Logo.vue'
+</script>
+
 <template>
 	<nav class="sidebar">
 		<div class="sidebar__header">
-			<img src="/logo.svg" width="128px" />
+			<Logo color="var(--p-primary-0)" :height="150" :width="200" />
 		</div>
 		<div class="sidebar__body">
 			<div class="section">
@@ -56,7 +60,7 @@
 
 <style scoped lang="scss">
 .sidebar {
-	background-color: var(--p-primary-0);
+	background-color: var(--p-primary-500);
 	width: 200px;
 	height: 100%;
 	position: fixed;
@@ -92,7 +96,7 @@
 
 		&__title {
 			font-size: var(--fs-12);
-			color: var(--p-gray-500);
+			color: var(--p-primary-0);
 			font-weight: 500;
 			padding: var(--p-8) var(--p-16);
 		}
@@ -114,7 +118,7 @@
 			display: flex;
 			flex-direction: row;
 			align-items: center;
-			color: var(--p-gray-500);
+			color: var(--p-primary-0);
 			text-decoration: none;
 			border: 0px solid transparent;
 			transition: 0.1s linear;
@@ -122,8 +126,8 @@
 			padding: var(--p-16) var(--p-32);
 
 			&:hover {
-				border-left: 8px solid var(--p-gray-500);
-				background-color: var(--p-primary-100);
+				border-left: 8px solid var(--p-primary-0);
+				background-color: var(--p-primary-600);
 			}
 		}
 	}

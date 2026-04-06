@@ -27,7 +27,7 @@ h3{
 }
 
 label {
-  color: var(--p-gray-600);
+  color: var(--p-gray-500);
 }
 
 .required {
