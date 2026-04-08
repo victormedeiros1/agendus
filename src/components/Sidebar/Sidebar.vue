@@ -4,16 +4,30 @@ import { Button } from 'primevue'
 import { ref } from 'vue'
 
 const isClosed = ref<boolean>(true)
+const sidebarRef = ref<HTMLElement | null>(null)
 
 const toggleMenu = (): void => {
 	isClosed.value = !isClosed.value
+}
+
+const closeMenu = (): void => {
+	isClosed.value = true
 }
 
 const isMobile = ref<boolean>(window.innerWidth <= 768)
 </script>
 
 <template>
-	<nav class="sidebar" :class="isClosed && isMobile ? 'sidebar--closed' : ''">
+	<!-- Overlay: visível apenas quando sidebar está aberta no mobile -->
+	<Transition name="fade">
+		<div v-if="isMobile && !isClosed" class="sidebar-overlay" @click="closeMenu" />
+	</Transition>
+
+	<nav
+		ref="sidebarRef"
+		class="sidebar"
+		:class="isClosed && isMobile ? 'sidebar--closed' : ''"
+	>
 		<Button
 			v-if="isMobile"
 			class="sidebar__toggle"
@@ -81,6 +95,23 @@ const isMobile = ref<boolean>(window.innerWidth <= 768)
 </template>
 
 <style scoped lang="scss">
+.sidebar-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 999;
+	background-color: rgba(0, 0, 0, 0.2);
+	cursor: pointer;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+	opacity: 0;
+}
 .sidebar {
 	background-color: var(--p-primary-500);
 	width: 200px;
@@ -125,8 +156,9 @@ const isMobile = ref<boolean>(window.innerWidth <= 768)
 		right: -24px;
 		background-color: var(--p-primary-500);
 		border: 0px solid transparent;
-		border-bottom-left-radius: 50%;
-		border-top-left-radius: 50%;
+		border-radius: 0;
+		border-top-right-radius: 50%;
+		border-bottom-right-radius: 50%;
 		width: 32px;
 		height: 32px;
 		display: flex;
@@ -136,6 +168,10 @@ const isMobile = ref<boolean>(window.innerWidth <= 768)
 		transition: 0.3s ease;
 
 		&--closed {
+			right: -32px;
+			border-radius: 0;
+			border-bottom-left-radius: 50%;
+			border-top-left-radius: 50%;
 			transform: rotate(180deg);
 		}
 	}
