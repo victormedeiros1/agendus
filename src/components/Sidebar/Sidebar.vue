@@ -27,7 +27,12 @@ import Logo from '@/components/Logo/Logo.vue'
 				<ul class="section__menu">
 					<div class="section__item">
 						<router-link class="section__link" to="/services">
-							<i class="pi pi-warehouse"></i>SERVIÇOS
+							<i class="pi pi-warehouse"></i>TODOS
+						</router-link>
+					</div>
+					<div class="section__item">
+						<router-link class="section__link" to="/services/new">
+							<i class="pi pi-warehouse"></i>NOVO
 						</router-link>
 					</div>
 				</ul>

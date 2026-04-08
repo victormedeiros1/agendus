@@ -30,3 +30,10 @@ export interface IRequestAppointment {
 	start: Date
 	end: Date
 }
+
+export interface IRequestService {
+	id: string
+	name: string
+	price: number
+	type: ServiceType
+}

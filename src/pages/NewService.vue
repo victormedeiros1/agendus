@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import Appointment from '@/components/Forms/Appointment.vue'
+import Service from '@/components/Forms/Service.vue'
 </script>
 
 <template>
-	<section class="new-appointment">
-		<h1 class="new-appointment__title">Novo agendamento</h1>
+	<section class="new-service">
+		<h1 class="new-service__title">Novo serviço</h1>
 
-		<Appointment />
+		<Service />
 	</section>
 </template>
 
 <style scoped lang="scss">
-.new-appointment {
+.new-service {
 	width: 100%;
 	padding: var(--p-24);
 

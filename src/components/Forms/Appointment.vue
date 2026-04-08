@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAppointmentsStore } from '@/stores/appointments'
+import { useServicesStore } from '@/stores/services'
 import { ServiceType, Service, IRequestAppointment } from '@/types/appointments'
 import useTime from '@/utils/useTime'
 import useVuelidate from '@vuelidate/core'
@@ -15,6 +16,7 @@ import {
 } from 'primevue'
 import { v4 as uuidv4 } from 'uuid'
 import { reactive, computed } from 'vue'
+import { useRouter } from 'vue-router'
 
 interface AppointmentForm {
 	id: string
@@ -33,11 +35,8 @@ interface AppointmentForm {
 	}
 }
 
-const SERVICES: Service[] = [
-	{ id: '0', name: 'Cabelo', price: 20, type: ServiceType.DEFAULT },
-	{ id: '1', name: 'Barba', price: 30, type: ServiceType.DEFAULT },
-	{ id: '2', name: 'Cabelo e Barba', price: 50, type: ServiceType.DEFAULT }
-]
+const { addAppointment } = useAppointmentsStore()
+const { services } = useServicesStore()
 
 const form = reactive<AppointmentForm>({
 	id: '',
@@ -49,9 +48,9 @@ const form = reactive<AppointmentForm>({
 	startTime: new Date(),
 	duration: 30,
 	service: {
-		id: SERVICES[0].id,
-		name: SERVICES[0].name,
-		price: SERVICES[0].price,
+		id: services[0].id,
+		name: services[0].name,
+		price: services[0].price,
 		type: ServiceType.DEFAULT
 	}
 })
@@ -73,16 +72,16 @@ const rules = computed(() => ({
 
 const v$ = useVuelidate(rules, form)
 
-const { addAppointment } = useAppointmentsStore()
 const { addTimeToDate, addMinutesToDate, formatDateTimeBR } = useTime()
 const toast = useToast()
+const router = useRouter()
 
 const typeSelectedIsDefault = computed(
 	(): boolean => form.service.type === ServiceType.DEFAULT
 )
 
 const selectedService = computed({
-	get: () => SERVICES.find(s => s.id === form.service.id),
+	get: () => services.find(s => s.id === form.service.id),
 	set: (service: Service | null) => {
 		if (!service) return
 		form.service.id = service.id
@@ -93,7 +92,7 @@ const selectedService = computed({
 
 const handleTypeServiceChange = (): void => {
 	if (typeSelectedIsDefault.value) {
-		Object.assign(form.service, SERVICES[0])
+		Object.assign(form.service, services[0])
 	} else {
 		form.service.id = ''
 		form.service.name = ''
@@ -190,12 +189,17 @@ const salvar = async (): Promise<void> => {
 						id="service-select"
 						v-model="selectedService"
 						optionLabel="name"
-						:options="SERVICES"
+						:options="services"
 						placeholder="Selecione um serviço"
 					/>
 					<small v-if="v$.service.id.$error" class="input-error"
 						>Serviço obrigatório</small
 					>
+					<Button
+						icon="pi pi-plus"
+						label="NOVO SERVIÇO"
+						@click="router.push('/services/new')"
+					/>
 				</div>
 
 				<div v-else class="input__group">

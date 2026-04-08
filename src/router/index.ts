@@ -1,6 +1,7 @@
 import Appointments from '@/pages/Appointments.vue'
 import Faturas from '@/pages/Faturas.vue'
 import NewAppointment from '@/pages/NewAppointment.vue'
+import NewService from '@/pages/NewService.vue'
 import Privacidade from '@/pages/Privacidade.vue'
 import Services from '@/pages/Services.vue'
 import { createRouter, createWebHistory } from 'vue-router'
@@ -17,13 +18,18 @@ const routes = [
 	},
 	{
 		path: '/appointments/new',
-		name: 'NovoAgendamento',
+		name: 'Novo agendamento',
 		component: NewAppointment
 	},
 	{
 		path: '/services',
 		name: 'Serviços',
 		component: Services
+	},
+	{
+		path: '/services/new',
+		name: 'Novo serviço',
+		component: NewService
 	},
 	{
 		path: '/faturas',
