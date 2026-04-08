@@ -1,6 +1,7 @@
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
 import ToastService from 'primevue/toastservice'
+import Tooltip from 'primevue/tooltip'
 import { createApp } from 'vue'
 
 import '@/styles/main.css'
@@ -13,6 +14,7 @@ import { Agendus } from './theme'
 const pinia = createPinia()
 const app = createApp(App)
 
+app.directive('tooltip', Tooltip)
 app.use(router)
 app.use(pinia)
 app.use(ToastService)

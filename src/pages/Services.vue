@@ -4,7 +4,7 @@ import { useServicesStore } from '@/stores/services'
 import { ServiceType } from '@/types/appointments'
 import { storeToRefs } from 'pinia'
 import { Button, useToast } from 'primevue'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const { services } = storeToRefs(useServicesStore())
@@ -48,6 +48,8 @@ const handleDelete = (): void => {
 		life: 5000
 	})
 }
+
+const haveServices = computed(() => services.value.length > 0)
 </script>
 
 <template>
@@ -57,7 +59,7 @@ const handleDelete = (): void => {
 			Gerencie os serviços cadastrados para agendamento.
 		</p>
 
-		<div v-if="services.length > 0" class="services__list">
+		<div v-if="haveServices" class="services__list">
 			<div v-for="service in services" :key="service.id" class="service-card">
 				<div class="service-card__header">
 					<h2 class="service-card__name">{{ service.name }}</h2>
@@ -90,6 +92,11 @@ const handleDelete = (): void => {
 				</div>
 			</div>
 		</div>
+
+		<small v-else class="services__subtitle"
+			>Nenhum serviço encontrado. Adicione um novo serviço para começar a gerenciar
+			seus agendamentos.</small
+		>
 		<Modal
 			body-text="Tem certeza de que deseja excluir este serviço?"
 			cancel-button-text="Cancelar"

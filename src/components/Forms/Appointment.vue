@@ -15,7 +15,7 @@ import {
 	useToast
 } from 'primevue'
 import { v4 as uuidv4 } from 'uuid'
-import { reactive, computed } from 'vue'
+import { reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 interface AppointmentForm {
@@ -48,9 +48,9 @@ const form = reactive<AppointmentForm>({
 	startTime: new Date(),
 	duration: 30,
 	service: {
-		id: services[0].id,
-		name: services[0].name,
-		price: services[0].price,
+		id: '',
+		name: '',
+		price: 0,
 		type: ServiceType.DEFAULT
 	}
 })
@@ -127,6 +127,17 @@ const salvar = async (): Promise<void> => {
 		life: 5000
 	})
 }
+
+const haveServices = computed(() => services.length > 0)
+
+onMounted(() => {
+	if (haveServices.value) {
+		form.service = services[0]
+		form.service.type = ServiceType.DEFAULT
+	} else {
+		form.service.type = ServiceType.CUSTOM
+	}
+})
 </script>
 
 <template>
@@ -160,12 +171,21 @@ const salvar = async (): Promise<void> => {
 					<div class="form__group form__group--radio">
 						<RadioButton
 							v-model="form.service.type"
+							:disabled="!haveServices"
 							inputId="type-default"
 							name="serviceType"
 							:value="ServiceType.DEFAULT"
 							@change="handleTypeServiceChange"
 						/>
 						<label for="type-default">Padrão</label>
+						<i
+							v-if="!haveServices"
+							v-tooltip.top="
+								'Não há serviços cadastrados. Adicione um novo serviço para habilitar esta opção.'
+							"
+							class="pi pi-info-circle"
+							style="color: var(--p-primary-500)"
+						></i>
 					</div>
 					<div class="form__group form__group--radio">
 						<RadioButton
@@ -182,7 +202,7 @@ const salvar = async (): Promise<void> => {
 					>
 				</div>
 
-				<div v-if="typeSelectedIsDefault" class="input__group">
+				<div v-if="typeSelectedIsDefault && haveServices" class="input__group">
 					<label for="service-select"
 						>Opções<span class="required">*</span></label
 					>
