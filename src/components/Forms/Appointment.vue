@@ -71,18 +71,18 @@ const rules = computed(() => ({
 }))
 
 const errors = computed(() => {
-	const client = v$.value.client
-	const service = v$.value.service
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const v = v$.value as any
 
 	return {
-		clientName: (client && client.name?.$error) || false,
-		serviceType: (service && service.type?.$error) || false,
-		serviceId: (service && service.id?.$error) || false,
-		serviceName: (service && service.name?.$error) || false,
-		servicePrice: (service && service.price?.$error) || false,
-		start: v$.value.start?.$error ?? false,
-		startTime: v$.value.startTime?.$error ?? false,
-		duration: v$.value.duration?.$error ?? false
+		clientName: v.client?.name?.$error ?? false,
+		serviceType: v.service?.type?.$error ?? false,
+		serviceId: v.service?.id?.$error ?? false,
+		serviceName: v.service?.name?.$error ?? false,
+		servicePrice: v.service?.price?.$error ?? false,
+		start: v.start?.$error ?? false,
+		startTime: v.startTime?.$error ?? false,
+		duration: v.duration?.$error ?? false
 	}
 })
 
