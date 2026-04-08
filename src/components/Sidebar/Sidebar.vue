@@ -122,10 +122,11 @@ const isMobile = ref<boolean>(window.innerWidth <= 768)
 		position: absolute;
 		top: 50%;
 		transform: translateY(-50%, 50%);
-		right: -20px;
+		right: -24px;
 		background-color: var(--p-primary-500);
 		border: 0px solid transparent;
-		border-radius: 50%;
+		border-bottom-left-radius: 50%;
+		border-top-left-radius: 50%;
 		width: 32px;
 		height: 32px;
 		display: flex;
