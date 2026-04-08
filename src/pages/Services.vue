@@ -2,13 +2,22 @@
 import { useServicesStore } from '@/stores/services'
 import { ServiceType } from '@/types/appointments'
 import { Button } from 'primevue'
+import { useRouter } from 'vue-router'
 
 const { services } = useServicesStore()
+const router = useRouter()
 
 const convertTypeToText = (type: ServiceType): string => {
 	if (type === ServiceType.DEFAULT) return 'Padrão'
 
 	return 'Personalizado'
+}
+
+const edit = (id: string): void => {
+	router.push({
+		name: 'Editar serviço',
+		params: { id }
+	})
 }
 </script>
 
@@ -29,6 +38,7 @@ const convertTypeToText = (type: ServiceType): string => {
 							severity="primary"
 							size="small"
 							variant="text"
+							@click="edit(service.id)"
 						/>
 						<Button
 							icon="pi pi-trash"

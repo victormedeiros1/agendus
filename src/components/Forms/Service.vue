@@ -5,7 +5,8 @@ import useVuelidate from '@vuelidate/core'
 import { required, minValue } from '@vuelidate/validators'
 import { InputText, InputNumber, Button, useToast } from 'primevue'
 import { v4 as uuidv4 } from 'uuid'
-import { reactive, computed } from 'vue'
+import { reactive, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 
 interface ServiceForm {
 	id: string
@@ -29,7 +30,8 @@ const rules = computed(() => ({
 
 const v$ = useVuelidate(rules, form)
 
-const { addService } = useServicesStore()
+const { addService, updateService } = useServicesStore()
+const route = useRoute()
 const toast = useToast()
 
 const salvar = async (): Promise<void> => {
@@ -44,14 +46,49 @@ const salvar = async (): Promise<void> => {
 		type: form.type
 	}
 
-	addService(payload)
+	if (editMode.value) {
+		updateService(payload)
 
-	toast.add({
-		severity: 'success',
-		summary: 'Serviço criado',
-		detail: `Serviço para ${payload.name} criado com sucesso!`
-	})
+		toast.add({
+			severity: 'success',
+			summary: 'Serviço atualizado',
+			detail: `Serviço para ${payload.name} atualizado com sucesso!`
+		})
+	} else {
+		addService(payload)
+
+		toast.add({
+			severity: 'success',
+			summary: 'Serviço criado',
+			detail: `Serviço para ${payload.name} criado com sucesso!`
+		})
+	}
 }
+
+const loadService = (id: string): void => {
+	const service = useServicesStore().services.find(service => service.id === id)
+
+	if (service) {
+		form.id = service.id
+		form.name = service.name
+		form.price = service.price
+		form.type = service.type
+	} else {
+		toast.add({
+			severity: 'error',
+			summary: 'Erro',
+			detail: 'Serviço não encontrado'
+		})
+	}
+}
+
+const editMode = computed(() => !!route.params.id)
+
+onMounted(() => {
+	if (editMode.value) {
+		loadService(route.params.id as string)
+	}
+})
 </script>
 
 <template>

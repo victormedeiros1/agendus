@@ -32,6 +32,11 @@ const routes = [
 		component: NewService
 	},
 	{
+		path: '/services/edit/:id',
+		name: 'Editar serviço',
+		component: NewService
+	},
+	{
 		path: '/faturas',
 		name: 'Faturas',
 		component: Faturas
