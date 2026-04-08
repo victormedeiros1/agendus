@@ -66,7 +66,7 @@ const rules = computed(() => ({
 		type: { required },
 		id: { required },
 		name: { required },
-		price: { required, minValue: minValue(1) }
+		price: { required }
 	}
 }))
 
