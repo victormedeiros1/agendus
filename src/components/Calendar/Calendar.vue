@@ -66,6 +66,10 @@ const appointMentsStore = storeToRefs(useAppointmentsStore())
 	// --vuecal-min-cell-size: 100px;
 	// --vuecal-transition-duration: 0.25 s;
 	// --vuecal-time-cell-height: 100px;
+
+	.vuecal__header {
+		border-radius: 0px;
+	}
 }
 .vuecal--default-theme .vuecal__event {
 	background-color: var(--p-primary-500);
