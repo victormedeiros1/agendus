@@ -31,6 +31,7 @@ const handleCancelAction = (): void => {
 		modal
 		:style="{ width: '100%', maxWidth: '600px' }"
 		:visible="isOpen"
+		@update:visible="emit('close')"
 	>
 		<div class="modal__body">
 			<p class="modal__text">{{ bodyText }}</p>
