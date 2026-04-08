@@ -70,6 +70,17 @@ const rules = computed(() => ({
 	}
 }))
 
+const errors = computed(() => ({
+	clientName: v$.value.client?.name?.$error,
+	serviceType: v$.value.service?.type?.$error,
+	serviceId: v$.value.service?.id?.$error,
+	serviceName: v$.value.service?.name?.$error,
+	servicePrice: v$.value.service?.price?.$error,
+	start: v$.value.start?.$error,
+	startTime: v$.value.startTime?.$error,
+	duration: v$.value.duration?.$error
+}))
+
 const v$ = useVuelidate(rules, form)
 
 const { addTimeToDate, addMinutesToDate, formatDateTimeBR } = useTime()
@@ -154,7 +165,7 @@ onMounted(() => {
 						variant="filled"
 					/>
 
-					<small v-if="v$.client.name.$error" class="input-error"
+					<small v-if="errors.clientName" class="input-error"
 						>Nome obrigatório</small
 					>
 				</div>
@@ -197,7 +208,7 @@ onMounted(() => {
 						/>
 						<label for="type-custom">Customizado</label>
 					</div>
-					<small v-if="v$.service.type.$error" class="input-error"
+					<small v-if="errors.serviceType" class="input-error"
 						>Tipo de serviço obrigatório</small
 					>
 				</div>
@@ -213,7 +224,7 @@ onMounted(() => {
 						:options="services"
 						placeholder="Selecione um serviço"
 					/>
-					<small v-if="v$.service.id.$error" class="input-error"
+					<small v-if="errors.serviceId" class="input-error"
 						>Serviço obrigatório</small
 					>
 					<Button
@@ -232,7 +243,7 @@ onMounted(() => {
 						v-model="form.service.name"
 						variant="filled"
 					/>
-					<small v-if="v$.service.name.$error" class="input-error"
+					<small v-if="errors.serviceName" class="input-error"
 						>Descrição obrigatória</small
 					>
 				</div>
@@ -248,7 +259,7 @@ onMounted(() => {
 						mode="currency"
 						variant="filled"
 					/>
-					<small v-if="v$.service.price.$error" class="input-error"
+					<small v-if="errors.servicePrice" class="input-error"
 						>Preço inválido</small
 					>
 				</div>
@@ -269,7 +280,7 @@ onMounted(() => {
 						placeholder="Ex: 01.01.2026"
 						showIcon
 					/>
-					<small v-if="v$.start.$error" class="input-error"
+					<small v-if="errors.start" class="input-error"
 						>Data início inválida</small
 					>
 				</div>
@@ -285,7 +296,7 @@ onMounted(() => {
 						showIcon
 						timeOnly
 					/>
-					<small v-if="v$.startTime.$error" class="input-error"
+					<small v-if="errors.startTime" class="input-error"
 						>Hora início inválida</small
 					>
 				</div>
@@ -301,7 +312,7 @@ onMounted(() => {
 						placeholder="Ex: 30"
 						variant="filled"
 					/>
-					<small v-if="v$.duration.$error" class="input-error"
+					<small v-if="errors.duration" class="input-error"
 						>Duração inválida</small
 					>
 				</div>
