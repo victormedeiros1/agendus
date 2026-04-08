@@ -45,7 +45,7 @@ const handleDelete = (): void => {
 		severity: 'success',
 		summary: 'Sucesso',
 		detail: 'Serviço excluído com sucesso!',
-		life: 3000
+		life: 5000
 	})
 }
 </script>

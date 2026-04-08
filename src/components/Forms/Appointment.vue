@@ -123,7 +123,8 @@ const salvar = async (): Promise<void> => {
 	toast.add({
 		severity: 'success',
 		summary: 'Agendamento criado',
-		detail: `Agendamento para ${payload.client.name} criado com sucesso!`
+		detail: `Agendamento para ${payload.client.name} criado com sucesso!`,
+		life: 5000
 	})
 }
 </script>

@@ -52,7 +52,8 @@ const salvar = async (): Promise<void> => {
 		toast.add({
 			severity: 'success',
 			summary: 'Serviço atualizado',
-			detail: `Serviço para ${payload.name} atualizado com sucesso!`
+			detail: `Serviço para ${payload.name} atualizado com sucesso!`,
+			life: 5000
 		})
 	} else {
 		addService(payload)
@@ -60,7 +61,8 @@ const salvar = async (): Promise<void> => {
 		toast.add({
 			severity: 'success',
 			summary: 'Serviço criado',
-			detail: `Serviço para ${payload.name} criado com sucesso!`
+			detail: `Serviço para ${payload.name} criado com sucesso!`,
+			life: 5000
 		})
 	}
 }
@@ -77,7 +79,8 @@ const loadService = (id: string): void => {
 		toast.add({
 			severity: 'error',
 			summary: 'Erro',
-			detail: 'Serviço não encontrado'
+			detail: 'Serviço não encontrado',
+			life: 5000
 		})
 	}
 }
