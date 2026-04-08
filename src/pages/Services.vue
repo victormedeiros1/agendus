@@ -1,11 +1,24 @@
 <script setup lang="ts">
+import Modal from '@/components/Modal/Modal.vue'
 import { useServicesStore } from '@/stores/services'
 import { ServiceType } from '@/types/appointments'
-import { Button } from 'primevue'
+import { storeToRefs } from 'pinia'
+import { Button, useToast } from 'primevue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-const { services } = useServicesStore()
+const { services } = storeToRefs(useServicesStore())
+const { deleteService } = useServicesStore()
+
+const toast = useToast()
 const router = useRouter()
+
+const isOpen = ref<boolean>(false)
+const serviceToDelete = ref<string>('')
+
+const handleModalVisibility = (): void => {
+	isOpen.value = !isOpen.value
+}
 
 const convertTypeToText = (type: ServiceType): string => {
 	if (type === ServiceType.DEFAULT) return 'Padrão'
@@ -13,10 +26,26 @@ const convertTypeToText = (type: ServiceType): string => {
 	return 'Personalizado'
 }
 
-const edit = (id: string): void => {
+const openModal = (id: string): void => {
+	serviceToDelete.value = id
+	handleModalVisibility()
+}
+
+const handleEdit = (id: string): void => {
 	router.push({
 		name: 'Editar serviço',
 		params: { id }
+	})
+}
+
+const handleDelete = (): void => {
+	deleteService(serviceToDelete.value)
+
+	toast.add({
+		severity: 'success',
+		summary: 'Sucesso',
+		detail: 'Serviço excluído com sucesso!',
+		life: 3000
 	})
 }
 </script>
@@ -38,13 +67,14 @@ const edit = (id: string): void => {
 							severity="primary"
 							size="small"
 							variant="text"
-							@click="edit(service.id)"
+							@click="handleEdit(service.id)"
 						/>
 						<Button
 							icon="pi pi-trash"
 							severity="danger"
 							size="small"
 							variant="text"
+							@click="openModal(service.id)"
 						/>
 					</div>
 				</div>
@@ -60,6 +90,15 @@ const edit = (id: string): void => {
 				</div>
 			</div>
 		</div>
+		<Modal
+			body-text="Tem certeza de que deseja excluir este serviço?"
+			cancel-button-text="Cancelar"
+			:confirm-action="() => handleDelete()"
+			confirm-button-text="Confirmar"
+			header-text="Confirmar exclusão"
+			:is-open="isOpen"
+			@close="handleModalVisibility"
+		/>
 	</div>
 </template>
 

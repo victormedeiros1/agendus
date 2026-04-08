@@ -14,6 +14,9 @@ export const useServicesStore = defineStore('services', {
 			if (index !== -1) {
 				this.services[index] = service
 			}
+		},
+		deleteService(id: string): void {
+			this.services = this.services.filter(service => service.id !== id)
 		}
 	}
 })
