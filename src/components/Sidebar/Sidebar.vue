@@ -1,9 +1,26 @@
 <script setup lang="ts">
 import Logo from '@/components/Logo/Logo.vue'
+import { Button } from 'primevue'
+import { ref } from 'vue'
+
+const isClosed = ref<boolean>(true)
+
+const toggleMenu = (): void => {
+	isClosed.value = !isClosed.value
+}
+
+const isMobile = ref<boolean>(window.innerWidth <= 768)
 </script>
 
 <template>
-	<nav class="sidebar">
+	<nav class="sidebar" :class="isClosed && isMobile ? 'sidebar--closed' : ''">
+		<Button
+			v-if="isMobile"
+			class="sidebar__toggle"
+			:class="isClosed && isMobile ? 'sidebar__toggle--closed' : ''"
+			icon="pi pi-chevron-left"
+			@click="toggleMenu"
+		/>
 		<div class="sidebar__header">
 			<Logo color="var(--p-primary-0)" :height="150" :width="200" />
 		</div>
@@ -67,14 +84,19 @@ import Logo from '@/components/Logo/Logo.vue'
 .sidebar {
 	background-color: var(--p-primary-500);
 	width: 200px;
-	height: 100%;
+	height: 100svh;
+	z-index: 1000;
 	position: fixed;
 	top: 0;
 	left: 0;
 	display: flex;
 	flex-direction: column;
-	box-shadow: 0 0 10px 0 var(--p-gray-200);
+	transition: 0.3s ease;
 	padding: var(--p-16) 0;
+
+	&--closed {
+		left: -200px;
+	}
 
 	&__header {
 		display: flex;
@@ -94,6 +116,27 @@ import Logo from '@/components/Logo/Logo.vue'
 	&__title {
 		font-size: var(--fs-24);
 		font-weight: 700;
+	}
+
+	&__toggle {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%, 50%);
+		right: -20px;
+		background-color: var(--p-primary-500);
+		border: 0px solid transparent;
+		border-radius: 50%;
+		width: 32px;
+		height: 32px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: 0.3s ease;
+
+		&--closed {
+			transform: rotate(180deg);
+		}
 	}
 
 	.section {

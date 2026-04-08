@@ -13,12 +13,11 @@
 	position: relative;
 	display: flex;
 	width: 100%;
-	min-height: 100vh;
+	min-height: 100svh;
 	margin: 0 auto;
-	padding-left: calc(var(--sidebarDistance));
 
-	@media (max-width: 768px) {
-		min-height: 100svh;
+	@media (min-width: 768px) {
+		padding-left: calc(var(--sidebarDistance));
 	}
 }
 </style>
