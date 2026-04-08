@@ -129,7 +129,7 @@ onMounted(() => {
 
 		<div class="form__footer">
 			<Button label="Salvar" severity="success" @click="salvar" />
-			<Button label="Cancelar" severity="danger" />
+			<Button label="Cancelar" severity="danger" variant="text" />
 		</div>
 	</div>
 </template>

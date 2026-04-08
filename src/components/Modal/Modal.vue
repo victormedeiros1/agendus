@@ -11,7 +11,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-	(e: 'close'): void
+	(event: 'close'): void
 }>()
 
 const handleConfirmAction = (): void => {
@@ -37,7 +37,12 @@ const handleCancelAction = (): void => {
 		</div>
 		<div class="modal__footer">
 			<Button label="Confirmar" severity="success" @click="handleConfirmAction" />
-			<Button label="Cancelar" severity="danger" @click="handleCancelAction" />
+			<Button
+				label="Cancelar"
+				severity="danger"
+				variant="text"
+				@click="handleCancelAction"
+			/>
 		</div>
 	</Dialog>
 </template>
