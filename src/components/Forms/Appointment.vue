@@ -71,14 +71,14 @@ const rules = computed(() => ({
 }))
 
 const errors = computed(() => ({
-	clientName: v$.value.client?.name?.$error,
-	serviceType: v$.value.service?.type?.$error,
-	serviceId: v$.value.service?.id?.$error,
-	serviceName: v$.value.service?.name?.$error,
-	servicePrice: v$.value.service?.price?.$error,
-	start: v$.value.start?.$error,
-	startTime: v$.value.startTime?.$error,
-	duration: v$.value.duration?.$error
+	clientName: v$.value.client?.name?.$error ?? false,
+	serviceType: v$.value.service?.type?.$error ?? false,
+	serviceId: v$.value.service?.id?.$error ?? false,
+	serviceName: v$.value.service?.name?.$error ?? false,
+	servicePrice: v$.value.service?.price?.$error ?? false,
+	start: v$.value.start?.$error ?? false,
+	startTime: v$.value.startTime?.$error ?? false,
+	duration: v$.value.duration?.$error ?? false
 }))
 
 const v$ = useVuelidate(rules, form)
