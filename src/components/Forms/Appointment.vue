@@ -133,7 +133,7 @@ const haveServices = computed(() => services.length > 0)
 onMounted(() => {
 	if (haveServices.value) {
 		form.service = services[0]
-		form.service.type = ServiceType.DEFAULT
+		form.service = { ...services[0], type: ServiceType.DEFAULT }
 	} else {
 		form.service.type = ServiceType.CUSTOM
 	}
