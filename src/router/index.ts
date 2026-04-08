@@ -4,9 +4,9 @@ import NewAppointment from '@/pages/NewAppointment.vue'
 import NewService from '@/pages/NewService.vue'
 import Privacidade from '@/pages/Privacidade.vue'
 import Services from '@/pages/Services.vue'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
-const routes = [
+const routes: RouteRecordRaw[] = [
 	{
 		path: '/',
 		redirect: '/appointments'
