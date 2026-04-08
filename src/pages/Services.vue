@@ -38,6 +38,12 @@ const handleEdit = (id: string): void => {
 	})
 }
 
+const handleCreate = (): void => {
+	router.push({
+		name: 'Novo serviço'
+	})
+}
+
 const handleDelete = (): void => {
 	deleteService(serviceToDelete.value)
 
@@ -50,14 +56,22 @@ const handleDelete = (): void => {
 }
 
 const haveServices = computed(() => services.value.length > 0)
+const servicesCount = computed(() => services.value.length)
 </script>
 
 <template>
 	<div class="services">
-		<h1 class="services__title">Serviços</h1>
-		<p class="services__subtitle">
-			Gerencie os serviços cadastrados para agendamento.
-		</p>
+		<div class="services__header">
+			<div class="services__texts">
+				<h1 class="services__title">Serviços</h1>
+				<p class="services__subtitle">
+					Gerencie os serviços cadastrados para agendamento.
+				</p>
+			</div>
+			<p v-if="haveServices" class="services__count">
+				{{ servicesCount }} cadastrados
+			</p>
+		</div>
 
 		<div v-if="haveServices" class="services__list">
 			<div v-for="service in services" :key="service.id" class="service-card">
@@ -93,10 +107,18 @@ const haveServices = computed(() => services.value.length > 0)
 			</div>
 		</div>
 
-		<small v-else class="services__subtitle"
-			>Nenhum serviço encontrado. Adicione um novo serviço para começar a gerenciar
-			seus agendamentos.</small
-		>
+		<div v-else class="services__empty-list">
+			<Button class="services__add-service" variant="text" @click="handleCreate">
+				<div aria-hidden="true" class="services__empty-icon">
+					<i class="pi pi-briefcase"></i>
+				</div>
+				<h3 class="services__empty-title">Nenhum serviço encontrado</h3>
+				<p class="services__empty-description">
+					Clique aqui para criar seu primeiro serviço!
+				</p>
+			</Button>
+		</div>
+
 		<Modal
 			body-text="Tem certeza de que deseja excluir este serviço?"
 			cancel-button-text="Cancelar"
@@ -112,28 +134,94 @@ const haveServices = computed(() => services.value.length > 0)
 <style scoped lang="scss">
 .services {
 	width: 100%;
-	padding: var(--p-24);
+	padding: var(--p-16);
 	display: flex;
 	flex-direction: column;
 	gap: var(--g-16);
+
+	@media (min-width: 768px) {
+		padding: var(--p-24);
+	}
+
+	&__header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		gap: var(--g-16);
+		padding: var(--p-16);
+		border-radius: 16px;
+		border: 1px solid var(--p-gray-200);
+	}
 
 	&__title {
 		font-size: var(--fs-32);
 		line-height: var(--lh-32);
 		font-weight: 700;
 		color: var(--p-gray-700);
+		margin-bottom: var(--m-8);
 	}
 
 	&__subtitle {
 		font-size: var(--fs-14);
 		line-height: var(--lh-20);
 		color: var(--p-gray-500);
+		max-width: 52ch;
+	}
+
+	&__count {
+		padding: var(--p-8) var(--p-12);
+		border-radius: 999px;
+		font-size: var(--fs-12);
+		line-height: var(--lh-16);
+		font-weight: 700;
+		letter-spacing: 0.03em;
+		text-transform: uppercase;
+		color: var(--p-primary-700);
+		background-color: var(--p-primary-100);
 	}
 
 	&__list {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 		gap: var(--g-16);
+	}
+
+	&__add-service {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		gap: var(--g-10);
+		min-height: 280px;
+		padding: var(--p-24);
+		border-radius: 16px;
+		border: 1px dashed var(--p-primary-400);
+	}
+
+	&__empty-icon {
+		display: grid;
+		place-items: center;
+		width: 56px;
+		height: 56px;
+		border-radius: 50%;
+		background-color: var(--p-primary-100);
+		color: var(--p-primary-600);
+		font-size: var(--fs-24);
+	}
+
+	&__empty-title {
+		font-size: var(--fs-24);
+		line-height: var(--lh-24);
+		color: var(--p-gray-700);
+	}
+
+	&__empty-description {
+		font-size: var(--fs-14);
+		line-height: var(--lh-20);
+		color: var(--p-gray-500);
+		max-width: 40ch;
 	}
 }
 
@@ -145,7 +233,6 @@ const haveServices = computed(() => services.value.length > 0)
 	display: flex;
 	flex-direction: column;
 	gap: var(--g-14);
-	box-shadow: 0 4px 20px rgba(30, 41, 59, 0.06);
 
 	&__header {
 		display: flex;
